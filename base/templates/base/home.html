@@ -6,9 +6,9 @@
 
 <div>
     {% for room in rooms %}
-        <li>
-            <a href="">{{room.id}} -- {{room.name}}</a>
-        </li>
+    <li>
+        <h2>{{room.id}} -- <a href="{% url 'room' room.id %}">{{room.name}}</a></h2>
+    </li>
     {% endfor %}
 </div>
 {% endblock content %}
