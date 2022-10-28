@@ -26,6 +26,10 @@ class Room(models.Model):
     # add date model once when room is initially created
     created = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        # order in descending newest first to oldest
+        ordering = ['-updated', '-created']
+
     def __str__(self):
         return self.name
 
