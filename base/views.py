@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Room
+from .models import Room, Topic
 from .forms import RoomForm
 
 
@@ -11,10 +11,19 @@ from .forms import RoomForm
 #     {'id': 3, 'name': "I love React "},
 # ]
 
-# get all rooms
+# get all data from DB
 def home(request):
-    rooms = Room.objects.all()
-    context = {'rooms': rooms}
+    # get query value from the url
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+
+    # filter room by topic - (__)means going up
+    # icontains - ensures that whatever value in topic name atleast contains what is in the query value - case insensitive
+    rooms = Room.objects.filter(topic__name__icontains=q)
+
+    topics = Topic.objects.all()
+
+    context = {'rooms': rooms, 'topics': topics}
+
     return render(request, 'base/home.html', context)
 
 # get requested rooms func
