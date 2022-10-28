@@ -11,17 +11,21 @@ from .forms import RoomForm
 #     {'id': 3, 'name': "I love React "},
 # ]
 
-
+# get all rooms
 def home(request):
     rooms = Room.objects.all()
     context = {'rooms': rooms}
     return render(request, 'base/home.html', context)
+
+# get requested rooms func
 
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
     context = {'room': room}
     return render(request, 'base/room.html', context)
+
+# create func
 
 
 def create_room(request):
@@ -37,6 +41,7 @@ def create_room(request):
     return render(request, 'base/room_form.html', context)
 
 
+# update func
 def update_room(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)  # prefill form with the fetched room value
@@ -49,3 +54,12 @@ def update_room(request, pk):
             return redirect("home")
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
+
+
+# delete func
+def delete_room(request, pk):
+    room = Room.objects.get(id=pk)
+    if request.method == "POST":
+        room.delete()  # delete room from DB
+        return redirect('home')
+    return render(request, 'base/delete.html', {'obj': room})
