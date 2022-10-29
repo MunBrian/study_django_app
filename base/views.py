@@ -14,6 +14,9 @@ from .forms import RoomForm
 #     {'id': 2, 'name': "Django is nice"},
 #     {'id': 3, 'name': "I love React "},
 # ]
+
+
+# login user func
 def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -40,6 +43,12 @@ def login_page(request):
 
     context = {}
     return render(request, 'base/login_registration.html', context)
+
+
+# logout user
+def logout_user(request):
+    logout(request)
+    return redirect('home')
 
 
 # get data from db
