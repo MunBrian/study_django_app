@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import RoomForm
 
 
@@ -59,9 +59,8 @@ def logout_user(request):
     logout(request)
     return redirect('home')
 
+
 # register user
-
-
 def register(request):
     form = UserCreationForm()
 
@@ -106,7 +105,11 @@ def home(request):
 # get requested rooms func
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    context = {'room': room}
+    # get set of messages related to the specific room
+    # get children model through the parent model the child model name should be in lower case
+    # newest comment should be first
+    room_messages = room.message_set.all().order_by('-created')
+    context = {'room': room, 'room_messages': room_messages}
     return render(request, 'base/room.html', context)
 
 
