@@ -102,14 +102,16 @@ def home(request):
     return render(request, 'base/home.html', context)
 
 
-# get requested rooms func
+# rooms func
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    # get set of messages related to the specific room
+    # get set of messages related to the specific room in many to one relation
     # get children model through the parent model the child model name should be in lower case
     # newest comment should be first
     room_messages = room.message_set.all().order_by('-created')
-
+    # get participant using all() in many to many rekationship
+    participants = room.participants.all()
+    print(participants)
     if request.method == "POST":
         # create message using Message model
         message = Message.objects.create(
@@ -118,10 +120,13 @@ def room(request, pk):
             body=request.POST.get('body')
         )
 
+        # add user automatically as a participant when he/she comments
+        room.participants.add(request.user)
         # fully reload page with a get request
         return redirect('room', pk=room.id)
 
-    context = {'room': room, 'room_messages': room_messages}
+    context = {'room': room, 'room_messages': room_messages,
+               'participants': participants}
     return render(request, 'base/room.html', context)
 
 

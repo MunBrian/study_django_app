@@ -20,7 +20,9 @@ class Room(models.Model):
     name = models.CharField(max_length=200)
     # the field can be left free
     description = models.TextField(null=True, blank=True)
-    # participants =
+    # since we can't reference a user we referenced in host we need to specify it
+    participants = models.ManyToManyField(
+        User, related_name='participants', blank=True)
     # update date/time each time the room is updated
     updated = models.DateTimeField(auto_now=True)
     # add date model once when room is initially created
