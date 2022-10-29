@@ -166,7 +166,7 @@ def update_room(request, pk):
     return render(request, 'base/room_form.html', context)
 
 
-# delete func
+# delete room func
 @login_required(login_url="/login")
 def delete_room(request, pk):
     room = Room.objects.get(id=pk)
@@ -179,3 +179,18 @@ def delete_room(request, pk):
         room.delete()  # delete room from DB
         return redirect('home')
     return render(request, 'base/delete.html', {'obj': room})
+
+
+# delete message func
+@login_required(login_url="/login")
+def delete_message(request, pk):
+    message = Message.objects.get(id=pk)
+
+    # check if the login user is the actual user who created the room
+    if request.user != message.user:
+        return HttpResponse('Unable to delete this message!!!')
+
+    if request.method == "POST":
+        message.delete()  # delete message from DB
+        return redirect('home')
+    return render(request, 'base/delete.html', {'obj': message})
