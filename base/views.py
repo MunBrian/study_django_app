@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
 from .models import Room, Topic
 from .forms import RoomForm
 
@@ -20,11 +21,13 @@ from .forms import RoomForm
 
 # login user func
 def login_page(request):
+    page = "login"
+
     if request.user.is_authenticated:
         return redirect('home')
 
     if request.method == "POST":
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         # check if user exist in the db
@@ -46,7 +49,7 @@ def login_page(request):
         else:
             messages.error(request, "Please enter valid username and password")
 
-    context = {}
+    context = {'page': page}
     return render(request, 'base/login_registration.html', context)
 
 
@@ -55,6 +58,27 @@ def logout_user(request):
     # delete user session
     logout(request)
     return redirect('home')
+
+# register user
+
+
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # commit= False - get user object once the form is valid
+            user = form.save(commit=False)
+            # make sure username is lower case
+            user.username = user.username.lower()
+            user.save()
+            # log the user in
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, "An error occurred during registration")
+    return render(request, 'base/login_registration.html', {'form': form})
 
 
 # get data from db
