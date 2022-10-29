@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from .models import Room, Topic
 from .forms import RoomForm
 
@@ -11,6 +14,33 @@ from .forms import RoomForm
 #     {'id': 2, 'name': "Django is nice"},
 #     {'id': 3, 'name': "I love React "},
 # ]
+def login_page(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # check if user exist in the db
+        try:
+            user = User.objects.get(username=username)
+        except:
+            # throw error message
+            messages.error(request, 'Username doesnot exist')
+
+        # authenticate will throw back a user object with the specified crediential if user is valid else throw error
+        # make sure credentials are correct
+        user = authenticate(request, username=username, password=password)
+
+        # if user exist
+        if user is not None:
+            # login - creates a session in the db and browser
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, "Please enter valid username and password")
+
+    context = {}
+    return render(request, 'base/login_registration.html', context)
+
 
 # get data from db
 def home(request):
