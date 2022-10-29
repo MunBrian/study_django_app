@@ -109,6 +109,18 @@ def room(request, pk):
     # get children model through the parent model the child model name should be in lower case
     # newest comment should be first
     room_messages = room.message_set.all().order_by('-created')
+
+    if request.method == "POST":
+        # create message using Message model
+        message = Message.objects.create(
+            user=request.user,
+            room=room,
+            body=request.POST.get('body')
+        )
+
+        # fully reload page with a get request
+        return redirect('room', pk=room.id)
+
     context = {'room': room, 'room_messages': room_messages}
     return render(request, 'base/room.html', context)
 
