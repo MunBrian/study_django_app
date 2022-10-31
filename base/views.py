@@ -80,6 +80,21 @@ def register(request):
     return render(request, 'base/login_registration.html', {'form': form})
 
 
+# user profile func
+def user_profile(request, pk):
+    # get user
+    user = User.objects.get(id=pk)
+    # get all rooms related to the user
+    rooms = user.room_set.all()
+    # get all messages related to the user
+    room_messages = user.message_set.all()
+    # get all topics
+    topics = Topic.objects.all
+    context = {'user': user, 'rooms': rooms,
+               'topics': topics, 'room_messages': room_messages}
+    return render(request, 'base/profile.html', context)
+
+
 # get data from db and display
 def home(request):
     # get query value from the url
