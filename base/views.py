@@ -80,7 +80,7 @@ def register(request):
     return render(request, 'base/login_registration.html', {'form': form})
 
 
-# get data from db
+# get data from db and display
 def home(request):
     # get query value from the url
     q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -93,11 +93,17 @@ def home(request):
         Q(description__icontains=q)
     )
 
+    # get all topics from DB
     topics = Topic.objects.all()
 
-    room_count = rooms.count()  # get number of rooms
+    # get number of rooms
+    room_count = rooms.count()
 
-    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count}
+    # get all messages from DB
+    room_messages = Message.objects.all()
+
+    context = {'rooms': rooms, 'topics': topics,
+               'room_count': room_count, 'room_messages': room_messages}
 
     return render(request, 'base/home.html', context)
 
@@ -108,7 +114,7 @@ def room(request, pk):
     # get set of messages related to the specific room in many to one relation
     # get children model through the parent model the child model name should be in lower case
     # newest comment should be first
-    room_messages = room.message_set.all().order_by('-created')
+    room_messages = room.message_set.all()
     # get participant using all() in many to many rekationship
     participants = room.participants.all()
     print(participants)
@@ -146,7 +152,7 @@ def create_room(request):
     return render(request, 'base/room_form.html', context)
 
 
-# update func
+# update room func
 @login_required(login_url="/login")
 def update_room(request, pk):
     room = Room.objects.get(id=pk)
