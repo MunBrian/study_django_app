@@ -50,7 +50,7 @@ def login_page(request):
             messages.error(request, "Please enter valid username and password")
 
     context = {'page': page}
-    return render(request, 'base/login_registration.html', context)
+    return render(request, 'base/login_register.html', context)
 
 
 # logout user
@@ -77,7 +77,7 @@ def register(request):
             return redirect('home')
         else:
             messages.error(request, "An error occurred during registration")
-    return render(request, 'base/login_registration.html', {'form': form})
+    return render(request, 'base/login_register.html', {'form': form})
 
 
 # user profile func
@@ -230,12 +230,18 @@ def delete_message(request, pk):
         return redirect('home')
     return render(request, 'base/delete.html', {'obj': message})
 
+
 # update user func
-
-
 @login_required(login_url='login')
 def update_user(request):
     user = request.user
     form = UserForm(instance=user)
+
+    if request.method == "POST":
+        form = UserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('user-profile', pk=user.id)
+
     context = {'form': form}
     return render(request, 'base/update-user.html', context)
