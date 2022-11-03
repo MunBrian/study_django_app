@@ -133,7 +133,6 @@ def room(request, pk):
     room_messages = room.message_set.all()
     # get participant using all() in many to many rekationship
     participants = room.participants.all()
-    print(participants)
     if request.method == "POST":
         # create message using Message model
         message = Message.objects.create(
@@ -247,12 +246,18 @@ def update_user(request):
     context = {'form': form}
     return render(request, 'base/update-user.html', context)
 
-# topic pages
 
-
+# topic page func
 def topic_pages(request):
     # get query value from the url
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     topics = Topic.objects.filter(name__icontains=q)
     context = {'topics': topics}
     return render(request, 'base/topics.html', context)
+
+
+# activities page func
+def activities_page(request):
+    room_messages = Message.objects. all()
+    context = {"room_messages": room_messages}
+    return render(request, 'base/activity.html', context)
