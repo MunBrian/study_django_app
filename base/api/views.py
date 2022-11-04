@@ -1,6 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from base.models import Room
+from .serializers import RoomSerializer
+from base.api import serializers
 
 
 # allow method that is used to access this view
@@ -17,4 +19,6 @@ def get_routes(request):
 @api_view(['GET'])
 def get_rooms(request):
     rooms = Room.objects.all()
-    return Response(rooms)
+    # many=True - serialize a query set/many objects
+    serializer = RoomSerializer(rooms, many=True)
+    return Response(serializer.data)
