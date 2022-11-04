@@ -16,6 +16,7 @@ class RoomForm(ModelForm):
 
 class UserForm(ModelForm):
     class Meta:
+        # specify inbuilt user model
         model = User
         # specify fields
         fields = ['username', 'email']
