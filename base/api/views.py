@@ -22,3 +22,11 @@ def get_rooms(request):
     # many=True - serialize a query set/many objects
     serializer = RoomSerializer(rooms, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_room(request, pk):
+    room = Room.objects.get(id=pk)
+    # many=False - serialize a single object
+    serializer = RoomSerializer(room, many=False)
+    return Response(serializer.data)
